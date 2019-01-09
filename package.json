@@ -1,0 +1,19 @@
+{
+  "name": "discordbot",
+  "version": "1.0.0",
+  "description": "Standard bot for discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/duncanbauer/discordbot.git"
+  },
+  "keywords": [
+    "discord",
+    "bot"
+  ],
+  "author": "Duncan Bauer",
+  "license": "UNLICENSED"
+}
