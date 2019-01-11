@@ -1,5 +1,6 @@
 {
     "prefix": "your-prefix-here",
-    "token": "your-token-here" 
+    "token": "your-token-here",
+    "dmson": "1",
+    "voicetest": "0"
 }
-

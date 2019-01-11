@@ -15,5 +15,9 @@
     "bot"
   ],
   "author": "Duncan Bauer",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "ffmpeg": "0.0.4",
+    "ytdl-core": "^0.29.0"
+  }
 }

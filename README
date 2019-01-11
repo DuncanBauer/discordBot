@@ -1,0 +1,37 @@
+Dependencies:
+ytdl-core
+fs
+ffmpeg
+Discord
+Firebase
+
+TODO:
+Firebase
+	set up database to store channels/banks/etc
+!ytsr
+	validate youtube link
+	check link is song
+!join
+	search firebase for relevant guild for given channel and join
+	
+	
+Feature List:
+
+User Commands:
+!status - replies with the bot's status
+!avatar - replies with the user's avatar image
+!ytsr [youtube link] - adds a song to the bot's playlist for the relevant guild (Bot must be online in a voice channel to request a song)
+
+Admin Commands:
+#join [voice channel name] - attepts to join the requested voice channel in the relevant
+#leave - leaves current voice channel in relevant guild
+#playlist - replies with all the songs queued in the current guild
+#enablesr - enables song requests
+#disablesr - disables song requests
+#pausesr - halts streaming
+#clearsr - clears sr queue
+#endsr - halts streaming and clears queue
+
+Creator Commands:
+@guilds - replies with a list of guilds the bot is active in
+@count - replies with how many instances of the bot are active
