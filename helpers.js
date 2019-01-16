@@ -87,15 +87,19 @@ adminCommands = {
         }
     },
 
-    pausesr: function(message, botManager) {
-        message.channel.send(`This doesn't do anything yet`);
-    },
-
     enablesr: function(message, botManager) {
         message.channel.send(`This doesn't do anything yet`);
     },
 
     disablesr: function(message, botManager) {
+        message.channel.send(`This doesn't do anything yet`);
+    },
+
+    pausesr: function(message, botManager) {
+        message.channel.send(`This doesn't do anything yet`);
+    },
+
+    clearsr: function(message, botManager) {
         message.channel.send(`This doesn't do anything yet`);
     },
 
