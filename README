@@ -1,9 +1,10 @@
 Dependencies:
-ytdl-core
-fs
-ffmpeg
-Discord
-Firebase
+ytdl-core // Youtube streaming
+fs	  // Filesystem right?
+ffmpeg    // For images and shit - Windows
+avconv    // For images and shit - Linux
+Discord   // Duh
+Firebase  // Databasing
 
 TODO:
 Firebase
@@ -13,6 +14,13 @@ Firebase
 	check link is song
 !join
 	search firebase for relevant guild for given channel and join
+#enablesr
+#disablesr
+#pausesr
+#clearsr
+#endsr
+@guilds
+@online
 	
 	
 Feature List:
@@ -34,4 +42,4 @@ Admin Commands:
 
 Creator Commands:
 @guilds - replies with a list of guilds the bot is active in
-@count - replies with how many instances of the bot are active
+@online - replies with how many instances of the bot are active
