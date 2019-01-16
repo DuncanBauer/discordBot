@@ -1,7 +1,8 @@
 Dependencies:
 ytdl-core // Youtube streaming
 fs	  // Filesystem right?
-ffmpeg    // For images and shit
+ffmpeg    // For images and shit - Windows
+avconv    // For images and shit - Linux
 Discord   // Duh
 Firebase  // Databasing
 
