@@ -1,9 +1,9 @@
 Dependencies:
-ytdl-core
-fs
-ffmpeg
-Discord
-Firebase
+ytdl-core // Youtube streaming
+fs	  // Filesystem right?
+ffmpeg    // For images and shit
+Discord   // Duh
+Firebase  // Databasing
 
 TODO:
 Firebase

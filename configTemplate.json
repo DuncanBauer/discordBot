@@ -1,4 +1,5 @@
 {
+    "name": "your-bot-name-here",
     "prefix": "your-prefix-here",
     "token": "your-token-here",
     "dmson": "1",
