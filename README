@@ -13,7 +13,7 @@ Firebase
 	validate youtube link
 	check link is song
 !join
-	search firebase for relevant guild for given channel and join
+	search firebase for current guild for given channel and join
 #enablesr
 #disablesr
 #pausesr
@@ -28,11 +28,11 @@ Feature List:
 User Commands:
 !status - replies with the bot's status
 !avatar - replies with the user's avatar image
-!ytsr [youtube link] - adds a song to the bot's playlist for the relevant guild (Bot must be online in a voice channel to request a song)
+!ytsr [youtube link] - adds a song to the bot's playlist for the current guild (Bot must be online in a voice channel to request a song)
 
 Admin Commands:
-#join [voice channel name] - attepts to join the requested voice channel in the relevant
-#leave - leaves current voice channel in relevant guild
+#join [voice channel name] - attepts to join the requested voice channel in the current guild
+#leave - leaves current voice channel in current guild
 #playlist - replies with all the songs queued in the current guild
 #enablesr - enables song requests
 #disablesr - disables song requests
