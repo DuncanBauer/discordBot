@@ -40,13 +40,21 @@ BotManager.client.on('message', message => {
                 message.channel.send(`Hey\, what do you think you\'re doing? This is a DM`);
             }
             else {
-                result = helpers.parseCommands(message);
+                result = helpers.parseCommands(message, BotManager);
             }
         }
         else {
-            result = helpers.parseCommands(message);
+            result = helpers.parseCommands(message, BotManager);
         }
 
         result(message, BotManager);
     }
+});
+
+
+BotManager.client.on('guildCreate', guild => {
+    BotManager.FirebaseConnection.database.ref(`guilds/ ${guild.id}`).set({
+        "name": guild.name,
+        "id": guild.id
+    });
 });
