@@ -7,7 +7,7 @@ module.exports = {
         if (channel != undefined) {
             if (channel.type === "text" || channel.type === "dm"
              || channel.type === "group" || channel.type === "category") {
-                message.reply(`I can not join ${channel.type} channel\'s`)
+                message.reply(`@${message.author.username}, I can not join ${channel.type} channel\'s`)
             }
             else {
                 channel.join()

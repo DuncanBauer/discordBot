@@ -19,8 +19,3 @@ module.exports = {
         return null;
     }
 };
-
-// FOR PLAYING MUSIC MOFO
-//const streamOptions = { seek: 0, volume: 1 };
-//const stream = ytdl(list[1], { filter : 'audioonly' });
-//const dispatcher = connection.playStream(stream, streamOptions);

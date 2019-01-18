@@ -22,26 +22,51 @@ VoiceConnectionHandler.prototype.count = function() {
 }
 
 
-function SongRequestQueue() {
-    this.playlist = [];
-    this.itemCount = 0;
+function SongRequestQueues() {
+    this.playlists = new Map();
+    this.enabled = new Map();
 }
 
-SongRequestQueue.prototype.addSong = function(link) {
-    this.playlist.push(link);
-    this.itemCount++;
+SongRequestQueues.prototype.enable = function(guildID) {
+    this.enabled.set(guildID, true);
 }
 
-SongRequestQueue.prototype.removeSong = function(n) {
-    this.playlist.splice(n-1)
+SongRequestQueues.prototype.disable = function(guildID) {
+    this.enabled.set(guildID, false);
 }
 
-SongRequestQueue.prototype.checkSong = function() {
+SongRequestQueues.prototype.addSong = function(guildID, link) {
+    if (this.playlists.has(guildID)) {
+        let playlist = this.playlists.get(guildID);
+        playlist.push(link);
 
+        this.playlists.set(guildID, playlist);
+    }
+    else {
+        this.playlists.set(guildID, [link]);
+    }
 }
 
-SongRequestQueue.prototype.count = function() {
-    return this.itemCount;
+SongRequestQueues.prototype.isEnabled = function(guildID) {
+    if (this.enabled.has(guildID)) {
+        return this.enabled.get(guildID);
+    }
+    return false;
+}
+
+SongRequestQueues.prototype.enable = function(guildID) {
+    this.enabled.set(guildID, true);
+}
+
+SongRequestQueues.prototype.disable = function(guildID) {
+    this.enabled.set(guildID, false);
+}
+
+SongRequestQueues.prototype.removeSong = function(n) {
+}
+
+SongRequestQueues.prototype.checkSong = function() {
+
 }
 
 
@@ -55,7 +80,6 @@ function FirebaseConnection() {
     this.firebase = Firebase;
     this.firebase.initializeApp(this.config_options);
 
-
     this.firebase.auth().signInWithEmailAndPassword(`${config.firebase['username']}`, `${config.firebase['password']}` ).catch(function(error) {
         console.log(error.code);
         console.log(error.message);
@@ -67,7 +91,7 @@ function FirebaseConnection() {
 
 function BotManager() {
     this.VoiceConnectionHandler = new VoiceConnectionHandler();
-    this.SongRequestQueue = new SongRequestQueue();
+    this.SongRequestQueues = new SongRequestQueues();
     this.FirebaseConnection = new FirebaseConnection();
 
     this.commands = new Discord.Collection();
@@ -91,9 +115,12 @@ function BotManager() {
     this.client.login(config.token);
 }
 
-BotManager.prototype.getSongRequestQueue = function() {
-    return this.SongRequestQueue;
+BotManager.prototype.newGuild = function(guild) {
+    this.FirebaseConnection.database.ref(`guilds/ ${guild.id}`).set({
+        "name": guild.name,
+        "id": guild.id
+    });
 }
 
 
-module.exports = {BotManager, VoiceConnectionHandler, SongRequestQueue}
+module.exports = {BotManager, VoiceConnectionHandler, SongRequestQueues}

@@ -1,6 +1,7 @@
 module.exports = {
     name: "enablesr",
     execute(message, botManager) {
-        message.channel.send(`This doesn't do anything yet`);
+        botManager.SongRequestQueues.enable(message.guild.id);
+        console.log("Song requests enabled");
     }
 }

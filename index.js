@@ -7,17 +7,17 @@ else if (process.platform == 'linux') {
 }
 
 const ytdl = require('ytdl-core');
-const Discord = require('discord.js');
 const classes = require('./classes.js');
 const helpers = require('./helpers.js');
 const config = require('./config.json');
+Discord = require('discord.js');
 
 
-const BotManager = new classes.BotManager();
+const botManager = new classes.BotManager();
 
-BotManager.client.on('message', message => {
+botManager.client.on('message', message => {
     if (`${config.voicetest}` === "1") {
-        BotManager.client.guilds.every(function(current) {
+        botManager.client.guilds.every(function(current) {
             current.channels.every(function(current) {
                 if (current.type === "voice") {
                     current.join()
@@ -40,21 +40,19 @@ BotManager.client.on('message', message => {
                 message.channel.send(`Hey\, what do you think you\'re doing? This is a DM`);
             }
             else {
-                result = helpers.parseCommands(message, BotManager);
+                result = helpers.parseCommands(message, botManager);
             }
         }
         else {
-            result = helpers.parseCommands(message, BotManager);
+            result = helpers.parseCommands(message, botManager);
         }
 
-        result(message, BotManager);
+        if (result != null) {
+            result(message, botManager);
+        }
     }
 });
 
-
-BotManager.client.on('guildCreate', guild => {
-    BotManager.FirebaseConnection.database.ref(`guilds/ ${guild.id}`).set({
-        "name": guild.name,
-        "id": guild.id
-    });
+botManager.client.on('guildCreate', guild => {
+    botManager.newGuild(guild);
 });
