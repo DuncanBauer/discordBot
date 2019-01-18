@@ -5,16 +5,16 @@ module.exports = {
     name: "ytsr",
     execute(message, botManager) {
         let guildID = message.guild.id;
-        if(botManager.SongRequestQueues.isEnabled(guildID)) {
-            if (botManager.VoiceConnectionHandler.voiceConnections.has(guildID)) {
+        if(botManager.VoiceConnectionHandler.isEnabled(guildID)) {
+            if (botManager.hasVoiceConnection(guildID)) {
                 var list = message.content.split(" ");
 
-                botManager.SongRequestQueues.addSong(guildID, list[1]);
-                message.reply(`@${message.author.username}, your song has been added.`);
+                botManager.addSong(guildID, list[1]);
+                message.reply(`Your song has been added.`);
                 console.log(`${guildID}: New song added to playlist by ${message.author.username}`);
             }
             else {
-                message.reply(`@${message.author.username}, ${config.name} is not currently in a voice channel. Please ask a mod to add it to a channel.`);
+                message.reply(`${config.name} is not currently in a voice channel. Please ask a mod to add it to a channel.`);
             }
         }
         else {
@@ -22,11 +22,3 @@ module.exports = {
         }
     }
 }
-
-
-/*
-// FOR PLAYING MUSIC MOFO
-const streamOptions = { seek: 0, volume: 1 };
-const stream = ytdl(list[1], { filter : 'audioonly' });
-const dispatcher = connection.playStream(stream, streamOptions);
-*/

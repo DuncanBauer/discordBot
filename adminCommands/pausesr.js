@@ -1,6 +1,10 @@
 module.exports = {
     name: "pausesr",
     execute(message, botManager) {
-        message.channel.send(`This doesn't do anything yet`);
+        let dispatcher = botManager.dispatchers.get(message.guild.id);
+        if(dispatcher && !dispatcher.paused) {
+            dispatcher.pause();
+            console.log(`${message.guild.id}: Song Request queue has paused playing`);
+        }
     }
 }

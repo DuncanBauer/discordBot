@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const Firebase = require('firebase');
+const ytdl = require('ytdl-core');
 const fs = require('fs');
 const config = require('./config.json');
 
@@ -7,35 +8,47 @@ const config = require('./config.json');
 function VoiceConnectionHandler() {
     this.voiceConnections = new Discord.Collection();
     this.connectionCount = 0;
+
+    this.playlists = new Discord.Collection();
+    this.enabled = new Discord.Collection();
 }
 
 VoiceConnectionHandler.prototype.addVoiceConnection = function(id, connection) {
     this.voiceConnections.set(id, connection);
 }
 
-VoiceConnectionHandler.prototype.removeVoiceConnection = function(id, connection) {
-    this.voiceConnections.delete(id, connection);
+VoiceConnectionHandler.prototype.removeVoiceConnection = function(id) {
+    this.voiceConnections.delete(id);
 }
 
 VoiceConnectionHandler.prototype.count = function() {
     return this.voiceConnections.length;
 }
 
-
-function SongRequestQueues() {
-    this.playlists = new Map();
-    this.enabled = new Map();
-}
-
-SongRequestQueues.prototype.enable = function(guildID) {
+VoiceConnectionHandler.prototype.enable = function(guildID) {
     this.enabled.set(guildID, true);
 }
 
-SongRequestQueues.prototype.disable = function(guildID) {
+VoiceConnectionHandler.prototype.disable = function(guildID) {
     this.enabled.set(guildID, false);
 }
 
-SongRequestQueues.prototype.addSong = function(guildID, link) {
+VoiceConnectionHandler.prototype.isEnabled = function(guildID) {
+    if (this.enabled.has(guildID)) {
+        return this.enabled.get(guildID);
+    }
+    return false;
+}
+
+VoiceConnectionHandler.prototype.enable = function(guildID) {
+    this.enabled.set(guildID, true);
+}
+
+VoiceConnectionHandler.prototype.disable = function(guildID) {
+    this.enabled.set(guildID, false);
+}
+
+VoiceConnectionHandler.prototype.addSong = function(guildID, link) {
     if (this.playlists.has(guildID)) {
         let playlist = this.playlists.get(guildID);
         playlist.push(link);
@@ -47,28 +60,11 @@ SongRequestQueues.prototype.addSong = function(guildID, link) {
     }
 }
 
-SongRequestQueues.prototype.isEnabled = function(guildID) {
-    if (this.enabled.has(guildID)) {
-        return this.enabled.get(guildID);
-    }
-    return false;
+VoiceConnectionHandler.prototype.removeSong = function() {
 }
 
-SongRequestQueues.prototype.enable = function(guildID) {
-    this.enabled.set(guildID, true);
+VoiceConnectionHandler.prototype.checkSong = function() {
 }
-
-SongRequestQueues.prototype.disable = function(guildID) {
-    this.enabled.set(guildID, false);
-}
-
-SongRequestQueues.prototype.removeSong = function(n) {
-}
-
-SongRequestQueues.prototype.checkSong = function() {
-
-}
-
 
 function FirebaseConnection() {
     this.config_options = {
@@ -91,8 +87,11 @@ function FirebaseConnection() {
 
 function BotManager() {
     this.VoiceConnectionHandler = new VoiceConnectionHandler();
-    this.SongRequestQueues = new SongRequestQueues();
     this.FirebaseConnection = new FirebaseConnection();
+
+    this.dispatchers = new Discord.Collection();
+    this.streamOptions = { seek: 0, volume: 1 };
+    this.stream = null;
 
     this.commands = new Discord.Collection();
     const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -102,8 +101,8 @@ function BotManager() {
     }
 
     this.adminCommands = new Discord.Collection();
-    const commandFiles2 = fs.readdirSync('./adminCommands').filter(file => file.endsWith('.js'));
-    for (const file of commandFiles2) {
+    const adminCommandFiles = fs.readdirSync('./adminCommands').filter(file => file.endsWith('.js'));
+    for (const file of adminCommandFiles) {
         const command = require(`./adminCommands/${file}`);
         this.adminCommands.set(command.name, command);
     }
@@ -115,6 +114,69 @@ function BotManager() {
     this.client.login(config.token);
 }
 
+BotManager.prototype.getVoiceConnection = function(guildID) {
+    return this.VoiceConnectionHandler.voiceConnections.get(guildID);
+}
+
+BotManager.prototype.hasVoiceConnection = function(guildID) {
+    return this.VoiceConnectionHandler.voiceConnections.has(guildID);
+}
+
+BotManager.prototype.removeVoiceConnection = function(guildID) {
+    this.getVoiceConnection(guildID).disconnect();
+    this.getVoiceConnection(guildID).channel.leave();
+    this.VoiceConnectionHandler.voiceConnections.delete(guildID);
+}
+
+BotManager.prototype.getPlaylist = function(guildID) {
+    return this.VoiceConnectionHandler.playlists.get(guildID);
+}
+
+BotManager.prototype.newDispatcher = function(guildID, link) {
+    let connection = this.getVoiceConnection(guildID);
+
+    this.stream = ytdl(link, { filter : 'audioonly' });
+    let playStream = connection.playStream(this.stream, this.streamOptions);
+    this.dispatchers.set(guildID, playStream);
+
+    playStream.on('end', reason => {
+        if(reason !== 'user') {
+            this.popSong(guildID);
+            let playlist = this.getPlaylist(guildID);
+            if(playlist.length > 0) {
+                let nextLink = this.getNextSong(guildID);
+                this.newDispatcher(guildID, nextLink);
+            }
+        }
+    });
+}
+
+BotManager.prototype.addSong = function(guildID, link) {
+    this.VoiceConnectionHandler.addSong(guildID, link);
+    if(this.VoiceConnectionHandler.playlists.get(guildID).length === 1) {
+        this.newDispatcher(guildID, link);
+    }
+}
+
+BotManager.prototype.getNextSong = function(guildID) {
+    let playlist = this.VoiceConnectionHandler.playlists.get(guildID);
+    return playlist[0];
+}
+
+BotManager.prototype.popSong = function(guildID) {
+    let playlist = this.VoiceConnectionHandler.playlists.get(guildID);
+    playlist = playlist.slice(1);
+    this.VoiceConnectionHandler.playlists.set(guildID, playlist);
+}
+
+BotManager.prototype.enablesr = function(guildID) {
+    this.VoiceConnectionHandler.enabled.set(guildID, true);
+}
+
+BotManager.prototype.disablesr = function(guildID) {
+    this.VoiceConnectionHandler.enabled.set(guildID, false);
+}
+
 BotManager.prototype.newGuild = function(guild) {
     this.FirebaseConnection.database.ref(`guilds/ ${guild.id}`).set({
         "name": guild.name,
@@ -123,4 +185,4 @@ BotManager.prototype.newGuild = function(guild) {
 }
 
 
-module.exports = {BotManager, VoiceConnectionHandler, SongRequestQueues}
+module.exports = {BotManager, VoiceConnectionHandler}

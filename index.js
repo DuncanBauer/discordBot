@@ -5,8 +5,6 @@ if (process.platform == 'win32') {
 else if (process.platform == 'linux') {
     const ffmpeg = require('avconv');
 }
-
-const ytdl = require('ytdl-core');
 const classes = require('./classes.js');
 const helpers = require('./helpers.js');
 const config = require('./config.json');
@@ -16,21 +14,6 @@ Discord = require('discord.js');
 const botManager = new classes.BotManager();
 
 botManager.client.on('message', message => {
-    if (`${config.voicetest}` === "1") {
-        botManager.client.guilds.every(function(current) {
-            current.channels.every(function(current) {
-                if (current.type === "voice") {
-                    current.join()
-                        .then(connection => console.log('Connected!'))
-                        .catch(console.error);
-                }
-                return true;
-            });
-            return true;
-        });
-    }
-
-
     // So it doesn't respond to itself infinitely
     if(message.author.username != `${config.name}`) {
         // If DMs are turned off in config.json and checks if the message is a DM
@@ -52,6 +35,11 @@ botManager.client.on('message', message => {
         }
     }
 });
+
+botManager.client.on('disconnect', even => {
+    console.log(even);
+    botManager.client.destroy();
+})
 
 botManager.client.on('guildCreate', guild => {
     botManager.newGuild(guild);

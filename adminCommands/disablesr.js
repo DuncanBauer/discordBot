@@ -1,7 +1,7 @@
 module.exports = {
     name: "disablesr",
     execute(message, botManager) {
-        botManager.SongRequestQueues.disable(message.guild.id);
-        console.log("Song requests disabled");
+        botManager.disablesr(message.guild.id);
+        console.log(`${message.guild.id}: Song requests disabled`);
     }
 }

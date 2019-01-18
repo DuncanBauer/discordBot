@@ -1,7 +1,7 @@
 module.exports = {
     name: "playlist",
     execute(message, botManager) {
-        let list = botManager.SongRequestQueues.playlists.get(message.guild.id);
+        let list = botManager.VoiceConnectionHandler.playlists.get(message.guild.id);
 
         list.forEach(function(current) {
             message.channel.send(current);

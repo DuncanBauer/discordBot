@@ -1,7 +1,15 @@
 {
-    "name": "your-bot-name-here",
-    "prefix": "your-prefix-here",
-    "token": "your-token-here",
-    "dmson": "1",
-    "voicetest": "0"
+    "name": "your_bot_name_here",
+    "prefixes": ["!", "#"],
+    "token": "your_token_here",
+    "dmson": "0",
+
+    "firebase": {
+        "apiKey": "your_firebase_apiKey_here",
+        "authDomain": "your_firebase_authDomain__here",
+        "databaseURL": "your_firebase_databaseURL_here",
+        "storageBucket": "your_firebase_storage_bucket_url_here",
+	"username": "your_firebase_username_here",
+	"password": "your_firebase_password_here"
+    }
 }
