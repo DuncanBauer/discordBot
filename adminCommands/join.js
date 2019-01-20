@@ -12,8 +12,6 @@ module.exports = {
             else {
                 let resume = false;
                 if (botManager.dispatchers.get(message.guild.id)) {
-                    //botManager.streamOptions = { seek: botManager.dispatchers.get(message.guild.id).time,
-                    //                             volume: 1 };
                     botManager.dispatchers.get(message.guild.id).end();
                     botManager.dispatchers.delete(message.guild.id);
                     resume = true;
@@ -29,7 +27,6 @@ module.exports = {
                 if (resume) {
                     botManager.newDispatcher(message.guild.id, botManager.getPlaylist(message.guild.id)[0]);
                 }
-                //botManager.streamOptions = { seek: 0, volume: 1 };
             }
         }
     }
